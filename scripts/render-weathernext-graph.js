@@ -10,10 +10,10 @@ var utils = require('users/gena/packages:utils')
 
 var gl = require('users/gena/packages:gl').init()
 
-var t = ee.Date('2025-01-06')
+var t = ee.Date('2023-09-08')
 
 var images = ee.ImageCollection('projects/gcp-public-data-weathernext/assets/59572747_4_0')
-  .filterDate('2025-01-06', '2025-01-06T06:00:00')
+  .filterDate(t, t.advance(6, 'hours'))
   .filter(ee.Filter.gt('forecast_hour', 0))
                   
 print(images.size())
@@ -104,29 +104,37 @@ images = images.map(function(i) {
 
   var uvRGB = abs
     .mask(abs.unitScale(7, 15))
-    .visualize({ min: 10, max: 50, palette: palettes.crameri.vik[50] }).rename(['r', 'g', 'b']).float()
+    .visualize({ min: 10, max: 50, palette: palettes.crameri.vik[50].slice(10), opacity: 0.8 }).rename(['r', 'g', 'b']).float()
 
   var uvArrows = gl.renderArrows(gl.fragCoord, uv, Map.getScale(), 8, 15, 0.7)
   
   var bg = ee.Image(1).visualize({ palette: ['black'], opacity: 0.5, forceRgbOutput: true })
 
-  return ee.ImageCollection([
-      bg,
-      utils.hillshadeRGB(
-          p.updateMask(p.unitScale(visPrecipMask.min, visPrecipMask.max)).visualize(visParamsPrecip).blend(uvArrows), 
-          p, 
-      weight, exaggeration * 1000, azimuth, zenith, contrast, brightness, saturation, castShadows),
-    ]).mosaic()
-    .set({ label: i.date().format('YYYY-MM-dd HH:mm').cat(' (').cat(ee.Number(i.get('forecast_hour')).format('%d')).cat(' hours)') })
-
+  // render P
+  // print('Precipitation rate, min: 0, max: 0.05')
+  // palettes.showPalette('', palettes.crameri.berlin[50])
+  
   // return ee.ImageCollection([
   //     bg,
   //     utils.hillshadeRGB(
-  //       uvRGB.blend(uvArrows), 
-  //       abs,
-  //     weight, exaggeration, azimuth, zenith, contrast, brightness, saturation, castShadows),
+  //         p.updateMask(p.unitScale(visPrecipMask.min, visPrecipMask.max)).visualize(visParamsPrecip).blend(uvArrows), 
+  //         p, 
+  //     weight, exaggeration * 500, azimuth, zenith, contrast, brightness, saturation, castShadows),
   //   ]).mosaic()
   //   .set({ label: i.date().format('YYYY-MM-dd HH:mm').cat(' (').cat(ee.Number(i.get('forecast_hour')).format('%d')).cat(' hours)') })
+
+  // render UV
+  print('Velocity at 10m, min: 10, max: 50')
+  palettes.showPalette('', palettes.crameri.vik[50].slice(10))
+
+  return ee.ImageCollection([
+      bg,
+      utils.hillshadeRGB(
+        uvRGB.blend(uvArrows), 
+        abs,
+      weight, exaggeration, azimuth, zenith, contrast, brightness, saturation, castShadows),
+    ]).mosaic()
+    .set({ label: i.date().format('YYYY-MM-dd HH:mm').cat(' (').cat(ee.Number(i.get('forecast_hour')).format('%d')).cat(' hours)') })
 })
 
 print(images.first())
