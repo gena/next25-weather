@@ -1,2 +1,5 @@
-# next25-weather
-Google Cloud NEXT'25 weather demo assets
+# Google Cloud NEXT'25 Weather Demo
+This repository contains resources used for the Google Cloud NEXT'25 weather demo.
+
+
+
