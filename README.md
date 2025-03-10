@@ -20,6 +20,19 @@ This repository contains Google Earth Engine scripts and Google BigQuery Noteboo
 [notebooks/weathernext-bigquery-simple.ipynb](notebooks/weathernext-bigquery-simple.ipynb)
 
 Temperature for New York
+
+```
+%%bigquery ny_temps --project {project_id}
+SELECT
+    t2.time AS time,
+    t2.`2m_temperature` as `2m_temperature`
+  FROM
+    `gcp-public-data-weathernext.WeatherNext.59572747_4_0` AS t1, t1.forecast AS t2
+  WHERE ST_INTERSECTS(t1.geography_polygon, ST_GEOGFROMTEXT('POLYGON((-70.66 40.64, -73.85 40.64, -73.85 40.89, -70.66 40.89, -70.66 40.64))'))  # New York City
+   AND t1.init_time = TIMESTAMP('2024-10-17 00:00:00 UTC')
+  ORDER BY t2.time
+```
+
 ![Temperature for New York](https://github.com/gena/next25-weather/blob/main/images/bq-weathernext-graph-t-newyork.png)
 
 Precipitation for Chicago
