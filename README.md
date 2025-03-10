@@ -26,7 +26,7 @@ Precipitation for Chicago
 ![Precipitation for Chicago](https://github.com/gena/next25-weather/blob/main/images/bq-weathernext-graph-p-chicago.png)
 
 Temperature and Wind Velocity for London
-![Temperature and Wind Velocity for London](https://github.com/gena/next25-weather/blob/main/images/bq-weathernext-graph-uv-temp-longon.png)
+![Temperature and Wind Velocity for London](https://github.com/gena/next25-weather/blob/main/images/bq-weathernext-graph-uv-temp-london.png)
 
 Map showing temperature distribution for Colorado for a single forecast time
 ![Map showing temperature for Colorado](https://github.com/gena/next25-weather/blob/main/images/bq-weathernext-graph-map-colorado.png)
