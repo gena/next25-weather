@@ -1,5 +1,5 @@
 ## Google Cloud NEXT'25 Weather Demo
-This repository contains resources used for the Google Cloud NEXT'25 weather demo.
+This repository contains resources used to support WeatherNext demo at the [Google Cloud NEXT'25](https://cloud.withgoogle.com/next/25).
 
 This repository contains Google Earth Engine scripts and Google BigQuery Notebooks demonstraing WeatherNext Graph and Gen weather forecasts. See https://deepmind.google/technologies/weathernext/ for more information about these models and datasets.
 
