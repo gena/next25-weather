@@ -13,13 +13,13 @@ var images = ee.ImageCollection('projects/gcp-public-data-weathernext/assets/595
   .filter(ee.Filter.gt('forecast_hour', 0))
 ```
 
-[scripts/render-weathernext-graph.js](scripts/render-weathernext-graph.js)
+[scripts/render-weathernext-graph.js](scripts/render-weathernext-graph.js) or open the [script](https://code.earthengine.google.com/3f2b767a55dd70df842a91e578da4393) in the EE Code Editor
 
 ![WeatherNext Graph Precipitation and Velocity](https://github.com/gena/next25-weather/blob/main/images/ee-weathernext-graph-p-zoom2.1.gif)
 
 ### Google Earth Engine: rendering [WeatherNext Gen](https://developers.google.com/earth-engine/datasets/catalog/projects_gcp-public-data-weathernext_assets_126478713_1_0) temperature across 50 ensembles
 
-[scripts/render-weathernext-gen.js](scripts/render-weathernext-gen.js)
+[scripts/render-weathernext-gen.js](scripts/render-weathernext-gen.js) or open the [script](https://code.earthengine.google.com/08440c3505220645e0bdbd8b58299770) in the EE Code Editor
 
 ![WeatherNext Gen Temperature](https://github.com/gena/next25-weather/blob/main/images/ee-weathernext-gen-T.gif)
 
