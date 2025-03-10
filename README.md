@@ -21,7 +21,7 @@ This repository contains Google Earth Engine scripts and Google BigQuery Noteboo
 
 Temperature for New York
 
-```
+```sql
 %%bigquery ny_temps --project {project_id}
 SELECT
     t2.time AS time,
