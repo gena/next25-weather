@@ -3,26 +3,33 @@ This repository contains resources used for the Google Cloud NEXT'25 weather dem
 
 This repository contains Google Earth Engine scripts and Google BigQuery Notebooks demonstraing WeatherNext Graph and Gen weather forecasts. See https://deepmind.google/technologies/weathernext/ for more information about these models and datasets.
 
-### Google Earth Engine: rendering WeatherNext Graph precipitation and velocity field at 10m
+### Google Earth Engine: rendering [WeatherNext Graph](https://developers.google.com/earth-engine/datasets/catalog/projects_gcp-public-data-weathernext_assets_126478713_1_0) precipitation and velocity field at 10m
+
+```javascript
+var t = ee.Date('2023-09-08')
+
+var images = ee.ImageCollection('projects/gcp-public-data-weathernext/assets/59572747_4_0')
+  .filterDate(t, t.advance(6, 'hours'))
+  .filter(ee.Filter.gt('forecast_hour', 0))
+```
 
 [scripts/render-weathernext-graph.js](scripts/render-weathernext-graph.js)
 
 ![WeatherNext Graph Precipitation and Velocity](https://github.com/gena/next25-weather/blob/main/images/ee-weathernext-graph-p-zoom2.1.gif)
 
-### Google Earth Engine: rendering WeatherNext Gen temperature across 50 ensembles
+### Google Earth Engine: rendering [WeatherNext Gen](https://developers.google.com/earth-engine/datasets/catalog/projects_gcp-public-data-weathernext_assets_126478713_1_0) temperature across 50 ensembles
 
 [scripts/render-weathernext-gen.js](scripts/render-weathernext-gen.js)
 
 ![WeatherNext Gen Temperature](https://github.com/gena/next25-weather/blob/main/images/ee-weathernext-gen-T.gif)
 
-### Google BigQuery: querying, analyzing, and visualizing WeatherNext Graph data
+### Google BigQuery: querying, analyzing, and visualizing [WeatherNext Graph](https://console.cloud.google.com/bigquery/analytics-hub/discovery/projects/gcp-public-data-weathernext/locations/us/dataExchanges/weathernext_19397e1bcb7/listings/weathernext_graph_forecasts_19398be87ec) data
 
 [notebooks/weathernext-bigquery-simple.ipynb](notebooks/weathernext-bigquery-simple.ipynb)
 
 Temperature for New York
 
 ```sql
-%%bigquery ny_temps --project {project_id}
 SELECT
     t2.time AS time,
     t2.`2m_temperature` as `2m_temperature`
