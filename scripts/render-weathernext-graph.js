@@ -1,5 +1,5 @@
 // Open this script into Google Earth Engine Code Editor: 
-// https://code.earthengine.google.com/3f2b767a55dd70df842a91e578da4393
+// https://code.earthengine.google.com/3fa07391e881110552caeab9a8b270dd
 
 var geometry = /* color: #69d653 */ee.Geometry.Point([-62.08844282226651, 34.61320981665174]);
 
@@ -15,7 +15,7 @@ var t = ee.Date('2023-09-08')
 var images = ee.ImageCollection('projects/gcp-public-data-weathernext/assets/59572747_4_0')
   .filterDate(t, t.advance(6, 'hours'))
   .filter(ee.Filter.gt('forecast_hour', 0))
-                  
+
 print(images.size())
 
 images = images.map(function(i) {
@@ -41,32 +41,32 @@ var visPrecipMask = {
 
 var properties = [
   'total_precipitation_6hr',
-  '50_temperature',
+  '2m_temperature',
   '10m_u_component_of_wind', 
   '10m_v_component_of_wind'
 ]
 
 // query temperature values at a given location
 var chartUV = ui.Chart.image.series({
-  imageCollection: images.select(['10m_u_component_of_wind', '10m_v_component_of_wind']).limit(100), 
+  imageCollection: images.select(['10m_u_component_of_wind', '10m_v_component_of_wind']), 
   region: geometry, 
   reducer: ee.Reducer.first(), 
   scale: 1000
 }).setOptions({ title: 'wind speed (m/s)'})
 
 var chartP = ui.Chart.image.series({
-  imageCollection: images.select(['total_precipitation_6hr']).limit(100), 
+  imageCollection: images.select(['total_precipitation_6hr']), 
   region: geometry, 
   reducer: ee.Reducer.first(), 
   scale: 1000
 }).setOptions({ title: 'precipitation (mm)'})
 
 var chartT = ui.Chart.image.series({
-  imageCollection: images.select(['50_temperature']).limit(100), 
+  imageCollection: images.select(['2m_temperature']).map(function(i) { return i.subtract(273.15).copyProperties(i, ['system:time_start']) }), 
   region: geometry, 
   reducer: ee.Reducer.first(), 
   scale: 1000
-}).setOptions({ title: 'temperature (K)'})
+}).setOptions({ title: 'temperature (C)'})
 
 var panel = ui.Panel([
   chartUV,
@@ -80,6 +80,12 @@ Map.add(panel)
 
 // animate
 var animation = require('users/gena/packages:animation')
+
+print('Precipitation rate, min: 0, max: 0.05')
+palettes.showPalette('', palettes.crameri.berlin[50])
+
+print('Velocity at 10m, min: 10, max: 50')
+palettes.showPalette('', palettes.crameri.vik[50].slice(10))
 
 images = images.map(function(i) { 
   i = i.resample('bilinear')
@@ -111,30 +117,24 @@ images = images.map(function(i) {
   var bg = ee.Image(1).visualize({ palette: ['black'], opacity: 0.5, forceRgbOutput: true })
 
   // render P
-  // print('Precipitation rate, min: 0, max: 0.05')
-  // palettes.showPalette('', palettes.crameri.berlin[50])
-  
-  // return ee.ImageCollection([
-  //     bg,
-  //     utils.hillshadeRGB(
-  //         p.updateMask(p.unitScale(visPrecipMask.min, visPrecipMask.max)).visualize(visParamsPrecip).blend(uvArrows), 
-  //         p, 
-  //     weight, exaggeration * 500, azimuth, zenith, contrast, brightness, saturation, castShadows),
-  //   ]).mosaic()
-  //   .set({ label: i.date().format('YYYY-MM-dd HH:mm').cat(' (').cat(ee.Number(i.get('forecast_hour')).format('%d')).cat(' hours)') })
-
-  // render UV
-  print('Velocity at 10m, min: 10, max: 50')
-  palettes.showPalette('', palettes.crameri.vik[50].slice(10))
-
   return ee.ImageCollection([
       bg,
       utils.hillshadeRGB(
-        uvRGB.blend(uvArrows), 
-        abs,
-      weight, exaggeration, azimuth, zenith, contrast, brightness, saturation, castShadows),
+          p.updateMask(p.unitScale(visPrecipMask.min, visPrecipMask.max)).visualize(visParamsPrecip).blend(uvArrows), 
+          p, 
+      weight, exaggeration * 500, azimuth, zenith, contrast, brightness, saturation, castShadows),
     ]).mosaic()
     .set({ label: i.date().format('YYYY-MM-dd HH:mm').cat(' (').cat(ee.Number(i.get('forecast_hour')).format('%d')).cat(' hours)') })
+
+  // // render UV
+  // return ee.ImageCollection([
+  //     bg,
+  //     utils.hillshadeRGB(
+  //       uvRGB.blend(uvArrows), 
+  //       abs,
+  //     weight, exaggeration, azimuth, zenith, contrast, brightness, saturation, castShadows),
+  //   ]).mosaic()
+  //   .set({ label: i.date().format('YYYY-MM-dd HH:mm').cat(' (').cat(ee.Number(i.get('forecast_hour')).format('%d')).cat(' hours)') })
 })
 
 print(images.first())
